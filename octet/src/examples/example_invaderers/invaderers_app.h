@@ -148,7 +148,7 @@ namespace octet {
       num_sound_sources = 8,
       num_rows = 5,
       num_cols = 10,
-      num_missiles = 2,
+      num_missiles = 99,
       num_bombs = 2,
       num_borders = 4,
       num_invaderers = num_rows * num_cols,
@@ -253,17 +253,26 @@ namespace octet {
       }
     }
 
+	//add live (1)
+	void add_lives() {
+		if (is_key_down('1'))
+		{
+			num_lives = num_lives + 1;
+		}
+		}
+
+	
     // fire button (space)
     void fire_missiles() {
       if (missiles_disabled) {
         --missiles_disabled;
-      } else if (is_key_going_down(' ')) {
+      } else if (is_key_down(' ')) {
         // find a missile
         for (int i = 0; i != num_missiles; ++i) {
           if (!sprites[first_missile_sprite+i].is_enabled()) {
             sprites[first_missile_sprite+i].set_relative(sprites[ship_sprite], 0, 0.5f);
             sprites[first_missile_sprite+i].is_enabled() = true;
-            missiles_disabled = 5;
+            missiles_disabled = 0.1f;  //interval between missiles to missiles
             ALuint source = get_sound_source();
             alSourcei(source, AL_BUFFER, whoosh);
             alSourcePlay(source);
@@ -474,7 +483,7 @@ namespace octet {
       bombs_disabled = 50;
       invader_velocity = 0.01f;
       live_invaderers = num_invaderers;
-      num_lives = 999;
+      num_lives = 3;
       game_over = false;
       score = 0;
     }
@@ -486,6 +495,8 @@ namespace octet {
       }
 
       move_ship();
+
+	  add_lives();
 
       fire_missiles();
 
