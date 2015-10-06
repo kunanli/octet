@@ -189,7 +189,7 @@ namespace octet {
     float invader_velocity;
 
     // sounds
-    ALuint whoosh;
+    ALuint lazer;
     ALuint bang;
     unsigned cur_source;
     ALuint sources[num_sound_sources];
@@ -274,7 +274,7 @@ namespace octet {
             sprites[first_missile_sprite+i].is_enabled() = true;
             missiles_disabled = 0.1f;  //interval between missiles to missiles
             ALuint source = get_sound_source();
-            alSourcei(source, AL_BUFFER, whoosh);
+            alSourcei(source, AL_BUFFER, lazer);
             alSourcePlay(source);
             break;
           }
@@ -299,7 +299,7 @@ namespace octet {
                 sprites[first_bomb_sprite+i].is_enabled() = true;
                 bombs_disabled = 30;
                 ALuint source = get_sound_source();
-                alSourcei(source, AL_BUFFER, whoosh);
+                alSourcei(source, AL_BUFFER, lazer);
                 alSourcePlay(source);
                 return;
               }
@@ -473,7 +473,7 @@ namespace octet {
       }
 
       // sounds
-      whoosh = resource_dict::get_sound_handle(AL_FORMAT_MONO16, "assets/invaderers/whoosh.wav");
+      lazer = resource_dict::get_sound_handle(AL_FORMAT_MONO16, "assets/invaderers/lazer.wav");
       bang = resource_dict::get_sound_handle(AL_FORMAT_MONO16, "assets/invaderers/bang.wav");
       cur_source = 0;
       alGenSources(num_sound_sources, sources);
