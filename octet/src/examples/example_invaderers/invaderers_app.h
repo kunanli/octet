@@ -143,31 +143,37 @@ namespace octet {
 
     // shader to draw a textured triangle
     texture_shader texture_shader_;
+	int num_boss = 300;
 
-    enum {
-      num_sound_sources = 8,
-      num_rows = 5,
-      num_cols = 10,
-      num_missiles = 99,
-      num_bombs = 2,
-      num_borders = 4,
-      num_invaderers = num_rows * num_cols,
+	//the things putted here are read-only
+	enum {
+		num_sound_sources = 8,
+		num_rows = 5,
+		num_cols = 10,
+		num_missiles = 99,
+		num_bombs = 2,
+		num_borders = 4,
+		num_invaderers = num_rows * num_cols,
+		
 
-      // sprite definitions
-      ship_sprite = 0,
-      game_over_sprite,
+		// sprite definitions
+		ship_sprite = 0,
+		game_over_sprite,
 
-      first_invaderer_sprite,
-      last_invaderer_sprite = first_invaderer_sprite + num_invaderers - 1,
+		first_invaderer_sprite,
+		last_invaderer_sprite = first_invaderer_sprite + num_invaderers - 1,
 
-      first_missile_sprite,
-      last_missile_sprite = first_missile_sprite + num_missiles - 1,
+		first_missile_sprite,
+		last_missile_sprite = first_missile_sprite + num_missiles - 1,
 
-      first_bomb_sprite,
-      last_bomb_sprite = first_bomb_sprite + num_bombs - 1,
+		first_bomb_sprite,
+		last_bomb_sprite = first_bomb_sprite + num_bombs - 1,
 
-      first_border_sprite,
-      last_border_sprite = first_border_sprite + num_borders - 1,
+		first_border_sprite,
+		last_border_sprite = first_border_sprite + num_borders - 1,
+
+
+		invaderer_Boss, //create a place for putting boss
 
       num_sprites,
 
@@ -219,8 +225,10 @@ namespace octet {
       if (live_invaderers == 4) {
         invader_velocity *= 4;
       } else if (live_invaderers == 0) {
-        game_over = true;
-        sprites[game_over_sprite].translate(-20, 0);
+        //game_over = true;
+        //sprites[game_over_sprite].translate(-20, 0);
+		  sprites[invaderer_Boss].is_enabled( )= true;
+		  sprites[invaderer_Boss].translate(0, -20.0f);  //put boss back in battlefield
       }
     }
 
@@ -233,6 +241,7 @@ namespace octet {
       if (--num_lives == 0) {
         game_over = true;
         sprites[game_over_sprite].translate(-20, 0);
+
       }
     }
 
@@ -337,8 +346,8 @@ namespace octet {
           for (int j = 0; j != num_invaderers; ++j) {
             sprite &invaderer = sprites[first_invaderer_sprite+j];
             if (invaderer.is_enabled() && missile.collides_with(invaderer)) {
-				invaderer.is_enabled() = true;
-              //invaderer.translate(0, 0);
+				invaderer.is_enabled() = false ;
+              invaderer.translate(20, 0);
               missile.is_enabled() = false;
               missile.translate(20, 0);
               on_hit_invaderer();
@@ -346,6 +355,16 @@ namespace octet {
               goto next_missile;
             }
           }
+		  if (missile.collides_with(sprites[invaderer_Boss])) {
+			  num_boss--;												 //missile hit the boss then - 1 hp
+			  if (num_boss == 0) {											
+				  game_over = true;
+				  sprites[game_over_sprite].translate(-20, 0);
+			  }
+				  
+		  }
+
+
           if (missile.collides_with(sprites[first_border_sprite+1])) {
             missile.is_enabled() = false;
             missile.translate(20, 0);
@@ -454,7 +473,8 @@ namespace octet {
       sprites[ship_sprite].init(ship, 0, -2.75f, 0.25f, 0.25f);
 
       GLuint GameOver = resource_dict::get_texture_handle(GL_RGBA, "assets/invaderers/GameOver.gif");
-      sprites[game_over_sprite].init(GameOver, 20, 0, 3, 1.5f);
+      sprites[game_over_sprite].init(GameOver
+		  , 20, 0, 3, 1.5f);
 
       GLuint invaderer = resource_dict::get_texture_handle(GL_RGBA, "assets/invaderers/invaderer.gif");
       for (int j = 0; j != num_rows; ++j) {
@@ -465,6 +485,12 @@ namespace octet {
           );
         }
       }
+
+	  //set the big boss
+	  GLuint invadererBoss = resource_dict::get_texture_handle(GL_RGBA, "assets/invaderers/invadererBoss.gif"); //get the texture for boss
+	  sprites[invaderer_Boss].init(invadererBoss, 0, 1.5f, 3.0f, 3.0f);											//create boss with location and size
+	  sprites[invaderer_Boss].is_enabled() = false;																//don't show up at beginning
+	  sprites[invaderer_Boss].translate(0, 20.0f);																//tell boss to stay at home
 
       // set the border to white for clarity
       GLuint white = resource_dict::get_texture_handle(GL_RGB, "#ffffff");
@@ -554,6 +580,10 @@ namespace octet {
       for (int i = 0; i != num_sprites; ++i) {
         sprites[i].render(texture_shader_, cameraToWorld);
       }
+
+	  //draw boss
+	  if(sprites[invaderer_Boss].is_enabled())
+		 sprites[invaderer_Boss].render(texture_shader_, cameraToWorld);
 
       char score_text[32];
       sprintf(score_text, "score: %d   lives: %d\n", score, num_lives);
