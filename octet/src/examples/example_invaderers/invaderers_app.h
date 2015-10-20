@@ -193,6 +193,7 @@ namespace octet {
 
     // speed of enemy
     float invader_velocity;
+	float boss_velocity;
 
     // sounds
     ALuint lazer;
@@ -245,6 +246,13 @@ namespace octet {
 
       }
     }
+
+	void move_boss(float dx, float dy)
+	{
+		if (sprites[invaderer_Boss].is_enabled()) {
+			sprites[invaderer_Boss].translate(dx, dy);
+		}
+	}
 
     // use the keyboard to move the ship
 	void move_ship() {
@@ -530,6 +538,7 @@ namespace octet {
       missiles_disabled = 0;
       bombs_disabled = 50;
       invader_velocity = 0.01f;
+	  boss_velocity = 0.02f;
       live_invaderers = num_invaderers;
       num_lives = 3;
       game_over = false;
@@ -556,11 +565,24 @@ namespace octet {
 
       move_invaders(invader_velocity, 0);
 
+	  move_boss(boss_velocity, 0);
+
+
       sprite &border = sprites[first_border_sprite+(invader_velocity < 0 ? 2 : 3)];
+
       if (invaders_collide(border)) {
         invader_velocity = -invader_velocity;
         move_invaders(invader_velocity, -0.1f);
       }
+	  
+
+	  sprite &border_boss = sprites[first_border_sprite + (boss_velocity < 0 ? 2 : 3)];
+
+	  if (sprites[invaderer_Boss].collides_with(border_boss)) {
+		  boss_velocity = -1.1f*boss_velocity;
+		  //move_boss(invader_velocity, -0.1f);
+	  }
+
     }
 
     // this is called to draw the world
