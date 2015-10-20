@@ -222,6 +222,7 @@ namespace octet {
 
       live_invaderers--;
       score++;
+	  
       if (live_invaderers == 4) {
         invader_velocity *= 4;
       } else if (live_invaderers == 0) {
@@ -355,10 +356,14 @@ namespace octet {
               goto next_missile;
             }
           }
+		  //missile hit the boss then - 1 hp
 		  if (missile.collides_with(sprites[invaderer_Boss])) {
-			  num_boss--;												 //missile hit the boss then - 1 hp
-			  if (num_boss == 0) {											
-				  game_over = true;
+			  num_boss--;
+			  score++;
+			  
+			  if (num_boss == 0) {	
+				  ;
+				  game_over = false;
 				  sprites[game_over_sprite].translate(-20, 0);
 			  }
 				  
