@@ -33,6 +33,9 @@ namespace octet {
 
     // true if this sprite is enabled.
     bool enabled;
+
+	
+
   public:
     sprite() {
       texture = 0;
@@ -148,7 +151,7 @@ namespace octet {
 	//the things putted here are read-only
 	enum {
 		num_sound_sources = 8,
-		num_rows = 5,
+		num_rows = 6,
 		num_cols = 10,
 		num_missiles = 99,
 		num_bombs = 2,
@@ -175,9 +178,12 @@ namespace octet {
 
 		invaderer_Boss, //create a place for putting boss
 
+
       num_sprites,
 
     };
+
+	int enemies[num_rows][num_cols];
 
     // timers for missiles and bombs
     int missiles_disabled;
@@ -473,6 +479,58 @@ namespace octet {
 
     // this is called once OpenGL is initialized
     void app_init() {
+
+		// store the line here
+		char buffer[2048];			//memory to put lines
+		dynarray<string> values;			//memory to store values from csv
+
+		
+
+		std::ifstream pipe("map.csv");  //connection to file line by line stream
+
+		if (pipe.bad() == false)			// bad = error in the pipe e.g. file don't exist
+		{
+			int rowCounter = 0;
+			// loop over lines
+			while (!pipe.eof())				//read until end of the file
+			{
+				pipe.getline(buffer, sizeof(buffer));			//read a row
+								
+																// loop over columns
+				char *columnPointer;					//Pointer - read colum
+				columnPointer = &(buffer[0]);			// pointing to first char of each cell
+				for (int col = 0; ; col++)				// read how many col in row
+				{
+					char *characterPointer; 
+					characterPointer = columnPointer;
+
+					string value;
+					while (*characterPointer != 0 && *characterPointer != ',')
+					{
+						/*const char ch = *characterPointer;
+						const char *c = &ch;
+						value += string(c);*/
+						++characterPointer;
+					}
+					
+					const char *c = columnPointer;
+					unsigned int size = characterPointer - columnPointer;
+					value = string(c, size);
+
+					enemies[rowCounter][col] = atoi(value);
+					//values.push_back(value);
+
+					if (*characterPointer == 0) break;
+
+					columnPointer = characterPointer + 1;
+				}
+				rowCounter++;
+			}
+			
+
+		}
+
+
       // set up the shader
       texture_shader_.init();
 
@@ -482,20 +540,36 @@ namespace octet {
 
       font_texture = resource_dict::get_texture_handle(GL_RGBA, "assets/big_0.gif");
 
-      GLuint ship = resource_dict::get_texture_handle(GL_RGBA, "assets/invaderers/ship.gif");
+      GLuint ship = resource_dict::get_texture_handle(GL_RGBA, "assets/invaderers/gun.gif");
       sprites[ship_sprite].init(ship, 0, -2.75f, 0.25f, 0.25f);
 
       GLuint GameOver = resource_dict::get_texture_handle(GL_RGBA, "assets/invaderers/GameOver.gif");
       sprites[game_over_sprite].init(GameOver
 		  , 20, 0, 3, 1.5f);
 
-      GLuint invaderer = resource_dict::get_texture_handle(GL_RGBA, "assets/invaderers/invaderer.gif");
-      for (int j = 0; j != num_rows; ++j) {
-        for (int i = 0; i != num_cols; ++i) {
+      //GLuint invaderer = resource_dict::get_texture_handle(GL_RGBA, "assets/invaderers/ben.gif");
+	  //GLuint invadererBlue = resource_dict::get_texture_handle(GL_RGBA, "assets/invaderers/blueben.gif");
+
+      for (int j = 0; j < num_rows; ++j) {
+        for (int i = 0; i < num_cols; ++i) {
+
+		  int mapCSV = enemies[j][i];
+
           assert(first_invaderer_sprite + i + j*num_cols <= last_invaderer_sprite);
+
+		  GLuint invaderer;
+		  if (mapCSV == 0) 
+		  {
+			  invaderer = resource_dict::get_texture_handle(GL_RGBA, "assets/invaderers/ben.gif");
+		  }
+		  else
+		  {
+			  invaderer = resource_dict::get_texture_handle(GL_RGBA, "assets/invaderers/blueben.gif");
+		  }
           sprites[first_invaderer_sprite + i + j*num_cols].init(
             invaderer, ((float)i - num_cols * 0.5f) * 0.5f, 2.50f - ((float)j * 0.5f), 0.25f, 0.25f
           );
+		 
         }
       }
 
