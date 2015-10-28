@@ -33,6 +33,9 @@
     <Filter Include="shaders">
       <UniqueIdentifier>{22786083-47af-48b2-98c4-2963f667bc44}</UniqueIdentifier>
     </Filter>
+    <Filter Include="CSV">
+      <UniqueIdentifier>{0c2244b9-0299-4fe6-8244-e0f20b5a27c7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
