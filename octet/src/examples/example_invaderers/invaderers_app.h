@@ -42,7 +42,18 @@ namespace octet {
       enabled = true;
     }
 
-    void init(int _texture, float x, float y, float w, float h) {
+	vec2 get_Position() //Creates a Get position for fireball.
+	{
+		return modelToWorld.row(3).xy();
+	}
+
+	void set_Position(vec2 pos) {		//Create a position value for fireball.
+
+		modelToWorld.translate(vec3(pos.x(),pos.y(),0.0f) - modelToWorld.row(3).xyz());
+
+	}
+
+    void init(int _texture, float x, float y, float w, float h) {		
       modelToWorld.loadIdentity();
       modelToWorld.translate(x, y, 0);
       halfWidth = w * 0.5f;
@@ -157,11 +168,14 @@ namespace octet {
 		num_bombs = 2,
 		num_borders = 4,
 		num_invaderers = num_rows * num_cols,
-		
+
+		num_explosions = 10,
 
 		// sprite definitions
 		ship_sprite = 0,
 		game_over_sprite,
+
+		
 
 		first_invaderer_sprite,
 		last_invaderer_sprite = first_invaderer_sprite + num_invaderers - 1,
@@ -178,8 +192,10 @@ namespace octet {
 
 		invaderer_Boss, //create a place for putting boss
 
+		first_Deathsprite, //Create array of explosions.
+		last_Deathsprite = first_Deathsprite + num_explosions - 1,
 
-      num_sprites,
+        num_sprites,
 
     };
 
@@ -210,6 +226,10 @@ namespace octet {
     // big array of sprites
     sprite sprites[num_sprites];
 
+	float explosionTimer[num_explosions];
+	float explosionTime = 0.5f;
+
+
     // random number generator
     class random randomizer;
 
@@ -222,16 +242,28 @@ namespace octet {
     ALuint get_sound_source() { return sources[cur_source++ % num_sound_sources]; }
 
     // called when we hit an enemy
-    void on_hit_invaderer() {
+    void on_hit_invaderer(int j) {
       ALuint source = get_sound_source();
       alSourcei(source, AL_BUFFER, bang);
       alSourcePlay(source);
 
       live_invaderers--;
+
+	  vec2 pos = sprites[first_invaderer_sprite + j].get_Position();		//get the postion of invaderer that was hit.
+	  for (int i = 0; i < num_explosions; i++)								//count array of fireball (there is the arry of fireball waiting to be called)
+	  {
+		  if (explosionTimer[i] <= 0.0f)									// if timer equal or less than 0
+		  {
+			  sprites[first_Deathsprite + i].set_Position(pos);				// the fireball  will be placed to setted position - outside of world
+			  explosionTimer[i] = explosionTime;							// reset the timer
+			  break;														// stoop
+		  }
+	  }
+
       score++;
 	  
       if (live_invaderers == 4) {
-        invader_velocity *= 4;
+       invader_velocity *= 4;
       } else if (live_invaderers == 0) {
         //game_over = true;
         //sprites[game_over_sprite].translate(-20, 0);
@@ -361,11 +393,13 @@ namespace octet {
           for (int j = 0; j != num_invaderers; ++j) {
             sprite &invaderer = sprites[first_invaderer_sprite+j];
             if (invaderer.is_enabled() && missile.collides_with(invaderer)) {
-				invaderer.is_enabled() = false ;
+			
+			  on_hit_invaderer(j);
+			  invaderer.is_enabled() = false ;
               invaderer.translate(20, 0);
               missile.is_enabled() = false;
               missile.translate(20, 0);
-              on_hit_invaderer();
+             
 
               goto next_missile;
             }
@@ -382,6 +416,7 @@ namespace octet {
 			  }
 				  
 		  }
+
 
 
           if (missile.collides_with(sprites[first_border_sprite+1])) {
@@ -547,6 +582,12 @@ namespace octet {
       sprites[game_over_sprite].init(GameOver
 		  , 20, 0, 3, 1.5f);
 
+	  GLuint death = resource_dict::get_texture_handle(GL_RGBA, "assets/invaderers/fireball.gif"); //Creates Texture
+ 
+	  for (int j = 0; j < num_explosions; ++j) {
+		  sprites[first_Deathsprite + j].init(death, 20, 20, 0.25f, 0.25f);
+	  }
+
       //GLuint invaderer = resource_dict::get_texture_handle(GL_RGBA, "assets/invaderers/ben.gif");
 	  //GLuint invadererBlue = resource_dict::get_texture_handle(GL_RGBA, "assets/invaderers/blueben.gif");
 
@@ -571,6 +612,7 @@ namespace octet {
           );
 		 
         }
+
       }
 
 	  //set the big boss
@@ -593,6 +635,8 @@ namespace octet {
         sprites[first_missile_sprite+i].init(missile, 20, 0, 0.0625f, 0.25f);
         sprites[first_missile_sprite+i].is_enabled() = false;
       }
+
+	 
 
       // use the bomb texture
       GLuint bomb = resource_dict::get_texture_handle(GL_RGBA, "assets/invaderers/bomb.gif");
@@ -619,11 +663,26 @@ namespace octet {
       score = 0;
     }
 
+	void update_Explosions(float deltaTime)			//function to handle the time of exploation
+	{
+		for (int i = 0; i < num_explosions; i++)	// when explodation happen then replace to fireball
+		{
+			explosionTimer[i] -= deltaTime;
+			if (explosionTimer[i] <= 0.0f)
+			{
+				//explosionTimer[i] = 0.0f;
+				sprites[first_Deathsprite + i].set_Position(vec2(20));
+			}
+		}
+	}
+
     // called every frame to move things
     void simulate() {
       if (game_over) {
         return;
       }
+
+	  update_Explosions(1.0f / 30.0f);
 
       move_ship();
 
