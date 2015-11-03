@@ -35,8 +35,6 @@ Secondly, by looking into the example – invaderers understand that to make a b
 ### 3.	Replace whoosh sound to laser sound.
 -	By switching the original wav file in the asset file to another free source laser sound.
 
-![A001](https://raw.githubusercontent.com/kunanli/octet/master/octet/assets/exam03.jpg)
-
 ### 4.	Replace images of spaceship and sprites.
 -	By switching the original images file in the asset file to other source images.
 ### 5.	Add KeyUp and KeyDown to remote spaceship freely.
