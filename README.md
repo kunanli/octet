@@ -53,7 +53,9 @@ Secondly, by looking into the example – invaderers understand that to make a b
 
 ### 8.	Create life, missiles collision and score on BigBoss
 -	Add number of boss life
--	Create a loop if missile hits the boss, then the hp will decrease 1 and score++, if number of life is zero then game over. 
+-	Create a loop if missile hits the boss, then the hp will decrease 1 and score++,
+    if number of life is zero then game over. 
+
 ![A001](https://raw.githubusercontent.com/kunanli/octet/master/octet/assets/exam02.jpg)
 
 ### 9.	Boss move and collide with border
