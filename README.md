@@ -1,8 +1,10 @@
 Intro programming - Report
 =======================
-MA Computer game art and design
-KunAn, Li
-33410075
+MA Computer game art and design -
+KunAn, Li -
+33410075 
+
+https://www.youtube.com/watch?v=kg_JPO7Xj9U&feature=youtu.be
 
 ----------
 Programming isn’t something that people can master in an hour, but through around one month transition on taking this module – Intro to game programming, I begin to appreciate the magic of it in making video game and have a preliminary idea of how it works at many helps from Raul, Alejandro, Tin and other friendly classmates.  The knowledge of programming that I have chance to peek are including understanding working environment, how certain words work in programming and also nailing the tasks we been asked to do in example invaderer. Hence, in the following text I will demonstrate how much I understand in the programming area via examples Andy provided.
