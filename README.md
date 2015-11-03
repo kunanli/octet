@@ -30,6 +30,8 @@ Secondly, by looking into the example – invaderers understand that to make a b
 ### 2.	Greatly decrease the interval time of missiles
 -	Change the original missile function from key_going_down to key_down and make the time missiles_disabled shorter to make missiles continual firing.
 
+![A002](https://raw.githubusercontent.com/kunanli/octet/master/octet/assets/exam06.jpg)
+
 ### 3.	Replace whoosh sound to laser sound.
 -	By switching the original wav file in the asset file to another free source laser sound.
 
@@ -63,6 +65,9 @@ Secondly, by looking into the example – invaderers understand that to make a b
 -	Add initial boss velocity
 -	Add a function to confine the boss inside the game scene and increase its velocity when everytime it hits the border.
 -	Draw the boss 
+
+![A001](https://raw.githubusercontent.com/kunanli/octet/master/octet/assets/exam07.jpg)
+
 
 ### 10.	Change background colour to white
 -	Initialize the background colour into white by binary colour coding.
