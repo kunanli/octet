@@ -75,6 +75,9 @@ Secondly, by looking into the example – invaderers understand that to make a b
 -	Build two ‘for loop’ to stand for num_rows and num_cols
 -	Add ‘If’ event to decide whether the value in CSV is 0, if yes then presents the invaderers’ texture to ben.gif, else shows blueben.gif instead.
 
+![A002](https://raw.githubusercontent.com/kunanli/octet/master/octet/assets/exam04.jpg)
+![A002](https://raw.githubusercontent.com/kunanli/octet/master/octet/assets/exam05.jpg)
+
 ### 12.	Fireball effect with timer after transfer the position of sprites.
 -	Make an array of fireball outside of the scene
 -	Replace the sprite to fireball while hitting the sprite.
